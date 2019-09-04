@@ -20,10 +20,9 @@ class CitylinesWriter(object):
     def load_nodes(self, coordinates):
         refs = []
         for lonlat in coordinates:
-            location = osmium.osm.Location(lonlat[0], lonlat[1])
             id = self.node_id()
             refs.append(id)
-            node = osmium.osm.mutable.Node(id=id, location=location)
+            node = osmium.osm.mutable.Node(id=id, location=lonlat)
             self.writer.add_node(node)
         return refs
 
