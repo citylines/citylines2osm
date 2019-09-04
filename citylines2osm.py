@@ -4,7 +4,7 @@ from lib.citylines_writer import CitylinesWriter
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("Usage: python main.py <infile> <outfile>")
+        print("Usage: python citylines2osm.py <infile> <outfile>")
         sys.exit(-1)
 
     infile = sys.argv[1]
