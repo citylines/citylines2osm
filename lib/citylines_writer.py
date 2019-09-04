@@ -15,6 +15,7 @@ class CitylinesWriter(object):
             ways.append(osmium.osm.mutable.Way(id=-props['id'], nodes=ref_ids))
         for way in ways:
             self.writer.add_way(way)
+        self.writer.close()
 
     def load_nodes(self, coordinates):
         refs = []
