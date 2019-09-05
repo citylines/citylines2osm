@@ -22,17 +22,16 @@ class SectionsParser(object):
 
     def build_way(self, feature):
         props = feature['properties']
-        coordinates = feature['geometry']['coordinates']
 
         id = props['osm_id']
         refs = []
 
         if not id:
             id = -props['id']
-            refs = self.load_nodes(coordinates)
+            refs = self.load_nodes(feature['geometry']['coordinates'])
 
-        tags = []
-        tags.append(('citylines:id', str(props['id'])))
+        tags = [('citylines:id', str(props['id']))]
+
         if 'osm_tags' in props:
             original_tags = json.loads(props['osm_tags'])
             for key in original_tags:
