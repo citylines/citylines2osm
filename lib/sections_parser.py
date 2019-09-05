@@ -32,7 +32,7 @@ class SectionsParser(object):
             refs = self.load_nodes(coordinates)
 
         tags = []
-        tags.append(('citylines_id', str(props['id'])))
+        tags.append(('citylines:id', str(props['id'])))
         if 'osm_tags' in props:
             original_tags = json.loads(props['osm_tags'])
             for key in original_tags:
