@@ -1,31 +1,22 @@
 import osmium
+from lib.sections_parser import SectionsParser
 
 class CitylinesWriter(object):
-    def __init__(self, output, features):
-        self.features = features
+    def __init__(self, sections, output):
+        self.sections = sections
         self.writer = osmium.SimpleWriter(output)
-        self._nodes = 0
 
     def call(self):
-        ways = []
-        for feature in self.features:
-            props = feature['properties']
-            coordinates = feature['geometry']['coordinates']
-            ref_ids = self.load_nodes(coordinates)
-            ways.append(osmium.osm.mutable.Way(id=-props['id'], nodes=ref_ids))
-        for way in ways:
-            self.writer.add_way(way)
+        sections_parser = SectionsParser(self.sections)
+        self.write_nodes(sections_parser.nodes)
+        self.write_ways(sections_parser.ways)
         self.writer.close()
 
-    def load_nodes(self, coordinates):
-        refs = []
-        for lonlat in coordinates:
-            id = self.node_id()
-            refs.append(id)
-            node = osmium.osm.mutable.Node(id=id, location=lonlat)
+    def write_nodes(self, nodes):
+        for node in nodes:
             self.writer.add_node(node)
-        return refs
 
-    def node_id(self):
-        self._nodes += 1
-        return -self._nodes
+    def write_ways(self, ways):
+        for way in ways:
+            self.writer.add_way(way)
+
