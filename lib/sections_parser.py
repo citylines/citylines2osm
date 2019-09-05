@@ -1,4 +1,5 @@
 import osmium
+import json
 
 class SectionsParser(object):
     def __init__(self, features):
@@ -30,7 +31,14 @@ class SectionsParser(object):
             id = -props['id']
             refs = self.load_nodes(coordinates)
 
-        return osmium.osm.mutable.Way(id=id, nodes=refs)
+        tags = []
+        tags.append(('citylines_id', str(props['id'])))
+        if 'osm_tags' in props:
+            original_tags = json.loads(props['osm_tags'])
+            for key in original_tags:
+                tags.append((key, str(original_tags[key])))
+
+        return osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags)
 
     def load_nodes(self, coordinates):
         refs = []
