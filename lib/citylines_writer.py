@@ -10,6 +10,7 @@ class CitylinesWriter(object):
         sections_parser = SectionsParser(self.sections)
         self.write_nodes(sections_parser.nodes)
         self.write_ways(sections_parser.ways)
+        self.write_relations(sections_parser.relations)
         self.writer.close()
 
     def write_nodes(self, nodes):
@@ -20,3 +21,6 @@ class CitylinesWriter(object):
         for way in ways:
             self.writer.add_way(way)
 
+    def write_relations(self, relations):
+        for relation in relations:
+            self.writer.add_relation(relation)
