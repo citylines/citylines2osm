@@ -16,3 +16,6 @@ class Parser(object):
     @property
     def relations(self):
         return self._relations
+
+    def run(self):
+        raise NotImplementedError
