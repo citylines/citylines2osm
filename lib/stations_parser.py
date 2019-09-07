@@ -16,10 +16,10 @@ class StationsParser(Parser):
         id = props['osm_id'] or -props['id']
         lonlat = feature['geometry']['coordinates']
 
-        return osmium.osm.mutable.Node(id=id, location=lonlat, tags=self._tags(props))
+        return osmium.osm.mutable.Node(id=id, location=lonlat, tags=self._build_tags(props))
 
-    def _tags(self, props):
-        tags = super()._tags(props)
+    def _build_tags(self, props):
+        tags = super()._build_tags(props)
         if not 'name' in dict(tags):
             tags.append(('name', props['name']))
         return tags
