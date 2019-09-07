@@ -18,4 +18,4 @@ if __name__ == '__main__':
             sections = json.load(json_sec_file)
             stations = json.load(json_sta_file)
             writer = CitylinesWriter(sections['features'], stations['features'], outfile)
-            writer.call()
+            writer.run()

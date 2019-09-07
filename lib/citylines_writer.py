@@ -8,7 +8,7 @@ class CitylinesWriter(object):
         self._stations = stations
         self.writer = osmium.SimpleWriter(output)
 
-    def call(self):
+    def run(self):
         stations_parser = StationsParser(self._stations)
         stations_parser.run()
         sections_parser = SectionsParser(self._sections)
