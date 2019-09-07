@@ -3,16 +3,19 @@ import sys
 from lib.citylines_writer import CitylinesWriter
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python citylines2osm.py <infile> <outfile>")
+    if len(sys.argv) != 4:
+        print("Usage: python citylines2osm.py <sections> <stations> <outfile>")
         sys.exit(-1)
 
-    infile = sys.argv[1]
-    outfile = sys.argv[2]
+    sections_file = sys.argv[1]
+    stations_file = sys.argv[2]
+    outfile = sys.argv[3]
 
     print('Writing ' + outfile)
 
-    with open(infile) as json_file:
-        data = json.load(json_file)
-        writer = CitylinesWriter(data['features'], outfile)
-        writer.call()
+    with open(sections_file) as json_sec_file:
+        with open(stations_file) as json_sta_file:
+            sections = json.load(json_sec_file)
+            stations = json.load(json_sta_file)
+            writer = CitylinesWriter(sections['features'], stations['features'], outfile)
+            writer.call()
