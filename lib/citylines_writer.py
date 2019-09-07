@@ -8,6 +8,8 @@ class CitylinesWriter(object):
 
     def call(self):
         sections_parser = SectionsParser(self.sections)
+        sections_parser.run()
+
         self.write_nodes(sections_parser.nodes)
         self.write_ways(sections_parser.ways)
         self.write_relations(sections_parser.relations)
