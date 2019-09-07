@@ -1,7 +1,7 @@
 import osmium
 import json
 
-class Parser(object):
+class FeaturesParser(object):
     def __init__(self, features):
         self.features = features
         self._nodes = []
@@ -22,10 +22,53 @@ class Parser(object):
         return self._relations
 
     def run(self):
-        raise NotImplementedError
+        self.load_features()
+        self.load_relations()
 
-    def _member_type(self):
-        raise NotImplementedError
+    def load_features(self):
+        for feature in self.features:
+            self._load_feature(feature)
+
+    def load_relations(self):
+        for i, rel_name in enumerate(self._relations_dict):
+            rel = self._relations_dict[rel_name]
+            tags = [('name',rel_name)]
+            members = []
+            for m in rel:
+                members.append((m['type'], m['id'],''))
+            rel = osmium.osm.mutable.Relation(id=-(i+1),members=members,tags=tags)
+            self._relations.append(rel)
+
+    def _load_feature(self, feature):
+        props = feature['properties']
+        way = props['klass'] == 'Section'
+
+        id = props['osm_id']
+        refs = []
+
+        if not id:
+            id = -props['id']
+            if way:
+                refs = self._load_nodes(feature['geometry']['coordinates'])
+
+        self._extract_lines(id, way, props)
+        tags = self._build_tags(props)
+
+        if way:
+            self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags))
+        else:
+            if not 'name' in dict(tags):
+                tags.append(('name', props['name']))
+            lonlat = feature['geometry']['coordinates']
+            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags))
+
+    def _load_nodes(self, coordinates):
+        refs = []
+        for lonlat in coordinates:
+            id = -(len(self.nodes) + 1)
+            refs.append(id)
+            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat))
+        return refs
 
     def _build_tags(self, props):
         tags = [('citylines:id', str(props['id']))]
@@ -35,21 +78,12 @@ class Parser(object):
                 tags.append((key, str(original_tags[key])))
         return tags
 
-    def _extract_lines(self, id, props):
+    def _extract_lines(self, id, way, props):
         for line_info in props['lines']:
             name = line_info['line']
             if line_info['system']:
                 name = line_info['system'] + ' ' + name
             if not name in self._relations_dict:
                 self._relations_dict[name] = []
-            self._relations_dict[name].append(id)
-
-    def load_relations(self):
-        for i, rel_name in enumerate(self._relations_dict):
-            rel = self._relations_dict[rel_name]
-            tags = [('name',rel_name)]
-            members = []
-            for id in rel:
-                members.append((self._member_type(), id,''))
-            rel = osmium.osm.mutable.Relation(id=-(i+1),members=members,tags=tags)
-            self._relations.append(rel)
+            t = 'w' if way else 'n'
+            self._relations_dict[name].append({'id':id, 'type':t})

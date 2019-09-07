@@ -1,24 +1,18 @@
 import osmium
-from lib.sections_parser import SectionsParser
-from lib.stations_parser import StationsParser
+from lib.parser import FeaturesParser
 
 class CitylinesWriter(object):
     def __init__(self, sections, stations, output):
-        self._sections = sections
-        self._stations = stations
+        self._features = sections + stations
         self.writer = osmium.SimpleWriter(output)
 
     def run(self):
-        stations_parser = StationsParser(self._stations)
-        stations_parser.run()
-        sections_parser = SectionsParser(self._sections)
-        sections_parser.run()
+        parser = FeaturesParser(self._features)
+        parser.run()
 
-        self.write_nodes(stations_parser.nodes)
-
-        self.write_nodes(sections_parser.nodes)
-        self.write_ways(sections_parser.ways)
-        self.write_relations(sections_parser.relations)
+        self.write_nodes(parser.nodes)
+        self.write_ways(parser.ways)
+        self.write_relations(parser.relations)
         self.writer.close()
 
     def write_nodes(self, nodes):
