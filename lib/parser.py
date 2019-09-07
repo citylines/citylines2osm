@@ -43,7 +43,7 @@ class FeaturesParser(object):
         props = feature['properties']
         way = props['klass'] == 'Section'
 
-        id = props['osm_id']
+        id = props['osm_id'] if 'osm_id' in props else None
         refs = []
 
         if not id:
