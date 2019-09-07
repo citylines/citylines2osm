@@ -1,3 +1,5 @@
+import json
+
 class Parser(object):
     def __init__(self, features):
         self.features = features
@@ -19,3 +21,11 @@ class Parser(object):
 
     def run(self):
         raise NotImplementedError
+
+    def _tags(self, props):
+        tags = [('citylines:id', str(props['id']))]
+        if 'osm_tags' in props:
+            original_tags = json.loads(props['osm_tags'])
+            for key in original_tags:
+                tags.append((key, str(original_tags[key])))
+        return tags

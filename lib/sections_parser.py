@@ -34,14 +34,7 @@ class SectionsParser(Parser):
                 self._relations_dict[name] = []
             self._relations_dict[name].append(id)
 
-        # We set the tags
-        tags = [('citylines:id', str(props['id']))]
-        if 'osm_tags' in props:
-            original_tags = json.loads(props['osm_tags'])
-            for key in original_tags:
-                tags.append((key, str(original_tags[key])))
-
-        return osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags)
+        return osmium.osm.mutable.Way(id=id, nodes=refs, tags=self._tags(props))
 
     def load_nodes(self, coordinates):
         refs = []
