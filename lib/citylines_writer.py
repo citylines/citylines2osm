@@ -7,7 +7,7 @@ class CitylinesWriter(object):
         self.writer = osmium.SimpleWriter(output)
 
     def run(self):
-        parser = FeaturesParser(self._features)
+        parser = FeaturesParser(self._features, exclude_osm_elements=True)
         parser.run()
 
         self.write_nodes(parser.nodes)

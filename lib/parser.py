@@ -2,12 +2,13 @@ import osmium
 import json
 
 class FeaturesParser(object):
-    def __init__(self, features):
+    def __init__(self, features, exclude_osm_elements=False):
         self.features = features
         self._nodes = []
         self._ways = []
         self._relations = []
         self._relations_dict = {}
+        self.exclude_osm_elements = exclude_osm_elements
 
     @property
     def nodes(self):
@@ -45,6 +46,9 @@ class FeaturesParser(object):
 
         id = props['osm_id'] if 'osm_id' in props else None
         refs = []
+
+        if id and self.exclude_osm_elements:
+            return
 
         if not id:
             id = -props['id']
