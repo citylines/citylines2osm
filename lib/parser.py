@@ -33,7 +33,7 @@ class FeaturesParser(object):
     def load_relations(self):
         for i, rel_name in enumerate(self._relations_dict):
             rel = self._relations_dict[rel_name]
-            tags = [('name',rel_name)]
+            tags = [('name',rel_name),('type','route')]
             members = []
             for m in rel:
                 members.append((m['type'], m['id'],''))
@@ -56,13 +56,12 @@ class FeaturesParser(object):
                 refs = self._load_nodes(feature['geometry']['coordinates'])
 
         self._extract_lines(id, way, props)
-        tags = self._build_tags(props)
+        tags = self._extract_tags(props)
 
         if way:
             self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags))
         else:
-            if not 'name' in dict(tags):
-                tags.append(('name', props['name']))
+            self._add_station_tags(tags, props)
             lonlat = feature['geometry']['coordinates']
             self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags))
 
@@ -74,12 +73,15 @@ class FeaturesParser(object):
             self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat))
         return refs
 
-    def _build_tags(self, props):
+    def _extract_tags(self, props):
         tags = [('citylines:id', str(props['id']))]
         if 'osm_tags' in props:
             original_tags = json.loads(props['osm_tags'])
             for key in original_tags:
                 tags.append((key, str(original_tags[key])))
+        for line_info in props['lines']:
+            if line_info['system']:
+                tags.append(('network',line_info['system']))
         return tags
 
     def _extract_lines(self, id, way, props):
@@ -91,3 +93,9 @@ class FeaturesParser(object):
                 self._relations_dict[name] = []
             t = 'w' if way else 'n'
             self._relations_dict[name].append({'id':id, 'type':t})
+
+    def _add_station_tags(self, tags, props):
+        if not 'name' in dict(tags):
+            tags.append(('name', props['name']))
+        if not 'public_transport' in dict(tags):
+            tags.append(('public_transport', 'stop'))
