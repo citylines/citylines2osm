@@ -1,6 +1,6 @@
 import json
 import sys
-from lib.citylines_writer import CitylinesWriter
+from lib.writer import CitylinesWriter
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
