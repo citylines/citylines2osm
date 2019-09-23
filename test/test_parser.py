@@ -28,6 +28,33 @@ class TestFeaturesParser(unittest.TestCase):
             }
         }
 
+        self.osm_section = {
+            'properties': {
+                'id': 1,
+                'klass': 'Section',
+                'lines': [{'system': 'Metro', 'line': 'L1'}],
+                'osm_id':'44441',
+                'osm_tags': '{"railway":"rail"}',
+            },
+            'geometry': {
+                'coordinates': [[10,20],[12,24]]
+            }
+        }
+
+        self.osm_station = {
+            'properties': {
+                'id': 3,
+                'klass': 'Station',
+                'name': 'Clot',
+                'lines': [{'system': 'Metro', 'line': 'L1'}],
+                'osm_id':'33331',
+                'osm_tags': '{"railway":"subway"}',
+            },
+            'geometry': {
+                'coordinates': [[11,22]]
+            }
+        }
+
     def test_non_osm_features(self):
         parser = FeaturesParser(features=[self.section, self.station])
         parser.run()
@@ -69,4 +96,43 @@ class TestFeaturesParser(unittest.TestCase):
         self.assertEqual(expected_tags, relation.tags)
 
         expected_members = [('w',-section_id, ''),('n', -station_id,'')]
+        self.assertEqual(expected_members, relation.members)
+
+    def test_osm_features(self):
+        parser = FeaturesParser(features=[self.osm_section, self.osm_station])
+        parser.run()
+
+        station_id = self.station['properties']['id']
+        section_id = self.section['properties']['id']
+        station_osm_id = self.osm_station['properties']['osm_id']
+        section_osm_id = self.osm_section['properties']['osm_id']
+
+        # Nodes
+        # =====
+        # As no refs are set by default in osm ways (because citylines doesn't store it),
+        # only the station node is available
+        node = parser.nodes[0]
+        self.assertEqual(self.osm_station['geometry']['coordinates'], node.location)
+        self.assertEqual(station_osm_id, node.id)
+
+        expected_tags = [('citylines:id',str(station_id)),('railway','subway'),('network', 'Metro'),('name','Clot'),('public_transport','stop')]
+        self.assertEqual(expected_tags, node.tags)
+
+        # Ways
+        # ====
+        way = parser.ways[0]
+        self.assertEqual(section_osm_id, way.id)
+
+        expected_tags = [('citylines:id', str(section_id)),('railway','rail'),('network', 'Metro')]
+        self.assertEqual(expected_tags, way.tags)
+
+        # Relations
+        # =========
+        relation = parser.relations[0]
+        self.assertEqual(-1, relation.id)
+
+        expected_tags = [('name', 'Metro L1'),('type', 'route')]
+        self.assertEqual(expected_tags, relation.tags)
+
+        expected_members = [('w',section_osm_id, ''),('n', station_osm_id,'')]
         self.assertEqual(expected_members, relation.members)
