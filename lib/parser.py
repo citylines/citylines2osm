@@ -45,10 +45,10 @@ class FeaturesParser(object):
         is_way = props['klass'] == 'Section'
         osm_id = props['osm_id'] if 'osm_id' in props else None
 
-        id = osm_id if osm_id else -props['id']
-
         if osm_id and self.exclude_osm_elements:
             return
+
+        id = osm_id if osm_id else -props['id']
 
         self._extract_lines(id, is_way, props)
         tags = self._extract_feature_tags(is_way, props)
