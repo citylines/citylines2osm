@@ -2,7 +2,11 @@
 Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into OSM XML files
 
 ## Usage
+Clone/download this repository, install [pipenv](https://pipenv-es.readthedocs.io/es/latest/), and run:
+```
 pipenv run python citylines2osm.py <sections JSON file> <stations JSON file> <outfile.osm>
+```
+Then, you can open the `osm` file from editors such as [JSOM](https://josm.openstreetmap.de).
 
 Note: Citylines2osm currently only considers features not originally imported from OSM.
 
