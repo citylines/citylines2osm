@@ -48,7 +48,7 @@ class FeaturesParser(object):
         if osm_id and self.exclude_osm_elements:
             return
 
-        id = osm_id if osm_id else -props['id']
+        id = osm_id or -props['id']
 
         self._extract_lines(id, is_way, props)
         tags = self._extract_feature_tags(is_way, props)
