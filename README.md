@@ -16,7 +16,6 @@ For each station node, the following tags are set:
 - `name`, with the station name
 - `public_transport=stop`
 
-
 For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
 - `type=route`
