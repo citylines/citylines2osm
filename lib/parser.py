@@ -33,7 +33,7 @@ class FeaturesParser(object):
     def load_relations(self):
         for i, rel_name in enumerate(self._relations_dict):
             rel = self._relations_dict[rel_name]
-            tags = [('name',rel_name)]
+            tags = [('name',rel_name),('type','route')]
             members = []
             for m in rel:
                 members.append((m['type'], m['id'],''))
@@ -42,27 +42,21 @@ class FeaturesParser(object):
 
     def _load_feature(self, feature):
         props = feature['properties']
-        way = props['klass'] == 'Section'
+        is_way = props['klass'] == 'Section'
+        osm_id = props['osm_id'] if 'osm_id' in props else None
 
-        id = props['osm_id'] if 'osm_id' in props else None
-        refs = []
+        id = osm_id if osm_id else -props['id']
 
-        if id and self.exclude_osm_elements:
+        if osm_id and self.exclude_osm_elements:
             return
 
-        if not id:
-            id = -props['id']
-            if way:
-                refs = self._load_nodes(feature['geometry']['coordinates'])
+        self._extract_lines(id, is_way, props)
+        tags = self._extract_feature_tags(is_way, props)
 
-        self._extract_lines(id, way, props)
-        tags = self._build_tags(props)
-
-        if way:
+        if is_way:
+            refs = [] if osm_id else self._load_nodes(feature['geometry']['coordinates'])
             self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags))
         else:
-            if not 'name' in dict(tags):
-                tags.append(('name', props['name']))
             lonlat = feature['geometry']['coordinates']
             self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags))
 
@@ -74,20 +68,28 @@ class FeaturesParser(object):
             self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat))
         return refs
 
-    def _build_tags(self, props):
+    def _extract_feature_tags(self, is_way, props):
         tags = [('citylines:id', str(props['id']))]
         if 'osm_tags' in props:
             original_tags = json.loads(props['osm_tags'])
             for key in original_tags:
                 tags.append((key, str(original_tags[key])))
+        for line_info in props['lines']:
+            if line_info['system']:
+                tags.append(('network',line_info['system']))
+        if not is_way:
+            if not 'name' in dict(tags):
+                tags.append(('name', props['name']))
+            if not 'public_transport' in dict(tags):
+                tags.append(('public_transport', 'stop'))
         return tags
 
-    def _extract_lines(self, id, way, props):
+    def _extract_lines(self, id, is_way, props):
         for line_info in props['lines']:
             name = line_info['line']
             if line_info['system']:
                 name = line_info['system'] + ' ' + name
             if not name in self._relations_dict:
                 self._relations_dict[name] = []
-            t = 'w' if way else 'n'
+            t = 'w' if is_way else 'n'
             self._relations_dict[name].append({'id':id, 'type':t})
