@@ -10,7 +10,7 @@ Then, you can open the `osm` file from editors such as [JSOM](https://josm.opens
 
 Note: Citylines2osm currently only considers features not originally imported from OSM.
 
-## Conversion rules:
+## Conversion rules
 The main rule that this tool follows is that sections are turned into ways, stations are turned into nodes, and lines are turned into relations.
 
 For each way (section), the following tags are set:
