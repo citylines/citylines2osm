@@ -1,5 +1,5 @@
 # citylines2osm
-Tool for converting [citylines](https://www.citylines.co) geoJSON dumps to OSM XML files
+Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into OSM XML files
 
 (Work in progress)
 
@@ -19,6 +19,8 @@ For each station node, the following tags are set:
 For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
 - `type=route`
+
+If the feature already had OSM tags, they will be kept.
 
 ## Tests
 Run:
