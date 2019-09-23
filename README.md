@@ -19,3 +19,9 @@ For each station node, the following tags are set:
 For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
 - `type=route`
+
+## Tests
+Run:
+```
+pipenv run python -m unittest
+```
