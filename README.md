@@ -1,7 +1,10 @@
 # citylines2osm
 Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into OSM XML files
 
-(Work in progress)
+## Usage
+pipenv run python citylines2osm.py <sections JSON file> <stations JSON file> <outfile.osm>
+
+Note: Citylines2osm currently only considers features not originally imported from OSM.
 
 ## Conversion rules:
 The main rule that this tool follows is that sections are turned into ways, stations are turned into nodes, and lines are turned into relations.
