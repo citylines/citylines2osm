@@ -1,5 +1,4 @@
 import unittest
-import osmium
 from lib.parser import FeaturesParser
 
 class TestFeaturesParser(unittest.TestCase):
