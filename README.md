@@ -1,4 +1,6 @@
 # citylines2osm
+[![CircleCI](https://circleci.com/gh/citylines/citylines2osm.svg?style=svg)](https://circleci.com/gh/citylines/citylines2osm)
+
 Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into OSM XML files
 
 ## Usage
