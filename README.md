@@ -1,7 +1,7 @@
 # citylines2osm
 [![CircleCI](https://circleci.com/gh/citylines/citylines2osm.svg?style=svg)](https://circleci.com/gh/citylines/citylines2osm)
 
-Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into OSM XML files
+Tool for converting [citylines](https://www.citylines.co) geoJSON dumps into [OSM XML files](https://wiki.openstreetmap.org/wiki/OSM_XML).
 
 ## Usage
 Clone/download this repository, install [pipenv](https://pipenv-es.readthedocs.io/es/latest/), and run:
