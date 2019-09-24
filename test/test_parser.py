@@ -34,6 +34,7 @@ class TestFeaturesParser(unittest.TestCase):
                 'lines': [{'system': 'Metro', 'line': 'L1'}],
                 'osm_id':'44441',
                 'osm_tags': '{"railway":"rail"}',
+                'osm_metadata': '{"version":2}'
             },
             'geometry': {
                 'coordinates': [[10,20],[12,24]]
@@ -48,6 +49,7 @@ class TestFeaturesParser(unittest.TestCase):
                 'lines': [{'system': 'Metro', 'line': 'L1'}],
                 'osm_id':'33331',
                 'osm_tags': '{"railway":"subway"}',
+                'osm_metadata':'{"version":3}'
             },
             'geometry': {
                 'coordinates': [[11,22]]
@@ -113,6 +115,7 @@ class TestFeaturesParser(unittest.TestCase):
         node = parser.nodes[0]
         self.assertEqual(self.osm_station['geometry']['coordinates'], node.location)
         self.assertEqual(station_osm_id, node.id)
+        self.assertEqual(3, node.version)
 
         expected_tags = [('citylines:id',str(station_id)),('railway','subway'),('network', 'Metro'),('name','Clot'),('public_transport','stop')]
         self.assertEqual(expected_tags, node.tags)
@@ -121,6 +124,7 @@ class TestFeaturesParser(unittest.TestCase):
         # ====
         way = parser.ways[0]
         self.assertEqual(section_osm_id, way.id)
+        self.assertEqual(2, way.version)
 
         expected_tags = [('citylines:id', str(section_id)),('railway','rail'),('network', 'Metro')]
         self.assertEqual(expected_tags, way.tags)

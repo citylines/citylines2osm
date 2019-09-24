@@ -52,13 +52,14 @@ class FeaturesParser(object):
 
         self._extract_lines(id, is_way, props)
         tags = self._extract_feature_tags(is_way, props)
+        metadata = self._extract_feature_metadata(props)
 
         if is_way:
             refs = [] if osm_id else self._load_nodes(feature['geometry']['coordinates'])
-            self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags))
+            self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags, version=metadata['version']))
         else:
             lonlat = feature['geometry']['coordinates']
-            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags))
+            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags, version=metadata['version']))
 
     def _load_nodes(self, coordinates):
         refs = []
@@ -83,6 +84,12 @@ class FeaturesParser(object):
             if not 'public_transport' in dict(tags):
                 tags.append(('public_transport', 'stop'))
         return tags
+
+    def _extract_feature_metadata(self, props):
+        metadata = {'version': None}
+        if 'osm_metadata' in props:
+            metadata = json.loads(props['osm_metadata'])
+        return metadata
 
     def _extract_lines(self, id, is_way, props):
         for line_info in props['lines']:
