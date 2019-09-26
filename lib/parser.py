@@ -44,10 +44,7 @@ class FeaturesParser(object):
             if transport_mode_tags:
                 tags.append(transport_mode_tags)
 
-            members = []
-            for m in rel['members']:
-                members.append((m['type'], m['id'], m['role']))
-            rel = osmium.osm.mutable.Relation(id=-(i+1),members=members,tags=tags)
+            rel = osmium.osm.mutable.Relation(id=-(i+1),members=rel['members'],tags=tags)
             self._relations.append(rel)
 
     def _load_feature(self, feature):
@@ -120,10 +117,12 @@ class FeaturesParser(object):
             if not name in self._relations_dict:
                 self._relations_dict[name] = {'transport_mode': transport_mode, 'members': []}
 
-            t = 'w' if element_type == self.WAY else 'n'
-            role = '' if element_type == self.WAY else 'stop'
+            self._relations_dict[name]['members'].append(self._build_member(id, element_type))
 
-            self._relations_dict[name]['members'].append({'id':id, 'type':t, 'role': role})
+    def _build_member(self, id, element_type):
+        t = 'w' if element_type == self.WAY else 'n'
+        role = '' if element_type == self.WAY else 'stop'
+        return (t, id, role)
 
     def _transport_mode_tags(self, element_type, props):
         # TODO: WAY:  set for example railway=subway
