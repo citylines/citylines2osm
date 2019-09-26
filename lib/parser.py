@@ -1,5 +1,3 @@
-import osmium
-import json
 from lib.elements import Node, Way, Relation
 
 class FeaturesParser(object):
