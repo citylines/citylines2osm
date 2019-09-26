@@ -1,6 +1,6 @@
 import osmium
 import json
-from lib.elements import Node, Way
+from lib.elements import Node, Way, Relation
 
 class FeaturesParser(object):
     WAY = 'way'
@@ -38,15 +38,8 @@ class FeaturesParser(object):
     def load_relations(self):
         for i, rel_name in enumerate(self._relations_dict):
             rel = self._relations_dict[rel_name]
-
-            tags = [('name',rel_name),('type','route'),('public_transport:version','2')]
-
-            #transport_mode_tags = self._transport_mode_tags(self.RELATION, rel)
-            #if transport_mode_tags:
-            #    tags.append(transport_mode_tags)
-
-            rel = osmium.osm.mutable.Relation(id=-(i+1),members=rel['members'],tags=tags)
-            self._relations.append(rel)
+            relation = Relation({**{'id':-(i+1),'name':rel_name},**rel})
+            self._relations.append(relation.osmium_object())
 
     def _load_feature(self, feature):
         if feature['properties']['klass'] == 'Section':

@@ -107,3 +107,25 @@ class Node(Element):
     def osmium_object(self):
         lonlat = self._geometry['coordinates']
         return osmium.osm.mutable.Node(id=self.id, location=lonlat, tags=self._tags, version=self._metadata['version'])
+
+class Relation(object):
+    def __init__(self, args):
+        self._id = args['id']
+        self._name = args['name']
+        self._members = args['members']
+        self._tags = self._build_tags()
+
+    def _build_tags(self):
+        tags = [('name',self._name),('type','route'),('public_transport:version','2')]
+
+        transport_mode_tags = self._transport_mode_tags()
+        if transport_mode_tags:
+            tags.append(transport_mode_tags)
+
+        return tags
+
+    def _transport_mode_tags(self):
+        return None
+
+    def osmium_object(self):
+        return osmium.osm.mutable.Relation(id=self._id,members=self._members,tags=self._tags)
