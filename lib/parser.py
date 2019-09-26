@@ -64,4 +64,4 @@ class FeaturesParser(object):
             if not name in self._relations_dict:
                 self._relations_dict[name] = {'transport_mode': line['transport_mode'], 'members': []}
 
-            self._relations_dict[name]['members'].append((el.member_type(), el.id, el.member_role()))
+            self._relations_dict[name]['members'].append(el.member())

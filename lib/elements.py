@@ -10,10 +10,8 @@ class Element(object):
         self._tags  = self._build_tags()
         self._metadata = self._build_metadata()
 
-    def member_type(self):
-        raise NotImplementedError
-
-    def member_role(self):
+    def member(self):
+        # (type, id, role)
         raise NotImplementedError
 
     def _build_tags(self):
@@ -66,11 +64,8 @@ class Way(Element):
         self._nodes = []
         self._refs = [] if self.osm_id else self._load_nodes()
 
-    def member_type(self):
-        return 'w'
-
-    def member_role(self):
-        return ''
+    def member(self):
+        return ('w', self.id, '')
 
     def _load_nodes(self):
         refs = []
@@ -88,11 +83,8 @@ class Way(Element):
 
 
 class Node(Element):
-    def member_type(self):
-        return 'n'
-
-    def member_role(self):
-        return 'stop'
+    def member(self):
+        return ('n', self.id, 'stop')
 
     def _build_tags(self):
         tags = super()._build_tags()
