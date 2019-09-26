@@ -60,8 +60,6 @@ class FeaturesParser(object):
     def _extract_lines(self, el):
         for line in el.lines_info():
             name = line['name']
-
             if not name in self._relations_dict:
                 self._relations_dict[name] = {'transport_mode': line['transport_mode'], 'members': []}
-
             self._relations_dict[name]['members'].append(el.member())
