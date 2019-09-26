@@ -75,7 +75,7 @@ class TestFeaturesParser(unittest.TestCase):
                 self.assertEqual(self.station['geometry']['coordinates'], node.location)
                 self.assertEqual(-station_id, node.id)
 
-                expected_tags = [('citylines:id',str(station_id)),('network', 'Metro'),('name','Clot'),('public_transport','stop')]
+                expected_tags = [('citylines:id',str(station_id)),('network', 'Metro'),('name','Clot'),('public_transport','stop_position')]
                 self.assertEqual(expected_tags, node.tags)
 
         # Ways
@@ -117,7 +117,7 @@ class TestFeaturesParser(unittest.TestCase):
         self.assertEqual(station_osm_id, node.id)
         self.assertEqual(3, node.version)
 
-        expected_tags = [('citylines:id',str(station_id)),('railway','subway'),('network', 'Metro'),('name','Clot'),('public_transport','stop')]
+        expected_tags = [('citylines:id',str(station_id)),('railway','subway'),('network', 'Metro'),('name','Clot'),('public_transport','stop_position')]
         self.assertEqual(expected_tags, node.tags)
 
         # Ways

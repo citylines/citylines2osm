@@ -82,7 +82,7 @@ class FeaturesParser(object):
             if not 'name' in dict(tags):
                 tags.append(('name', props['name']))
             if not 'public_transport' in dict(tags):
-                tags.append(('public_transport', 'stop'))
+                tags.append(('public_transport', 'stop_position'))
         return tags
 
     def _extract_feature_metadata(self, props):

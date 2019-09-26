@@ -23,7 +23,7 @@ For each station node, the following tags are set:
 - `citylines:id`, with the original citylines id
 - `network`, equal to the system name
 - `name`, with the station name
-- `public_transport=stop`
+- `public_transport=stop_position`
 
 For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
