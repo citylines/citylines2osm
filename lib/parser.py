@@ -1,5 +1,6 @@
 import osmium
 import json
+from lib.elements import Node, Way, Relation
 
 class FeaturesParser(object):
     WAY = 'way'
@@ -37,95 +38,30 @@ class FeaturesParser(object):
     def load_relations(self):
         for i, rel_name in enumerate(self._relations_dict):
             rel = self._relations_dict[rel_name]
-
-            tags = [('name',rel_name),('type','route'),('public_transport:version','2')]
-
-            transport_mode_tags = self._transport_mode_tags(self.RELATION, rel)
-            if transport_mode_tags:
-                tags.append(transport_mode_tags)
-
-            rel = osmium.osm.mutable.Relation(id=-(i+1),members=rel['members'],tags=tags)
-            self._relations.append(rel)
+            relation = Relation({**{'id':-(i+1),'name':rel_name},**rel})
+            self._relations.append(relation.osmium_object())
 
     def _load_feature(self, feature):
-        props = feature['properties']
-        element_type = self.WAY if props['klass'] == 'Section' else self.NODE
-        osm_id = props['osm_id'] if 'osm_id' in props else None
-
-        if osm_id and self.exclude_osm_elements:
-            return
-
-        id = osm_id or -props['id']
-
-        self._extract_lines(id, element_type, props)
-        tags = self._extract_feature_tags(element_type, props)
-        metadata = self._extract_feature_metadata(props)
-
-        if element_type == self.WAY:
-            refs = [] if osm_id else self._load_nodes(feature['geometry']['coordinates'])
-            self._ways.append(osmium.osm.mutable.Way(id=id, nodes=refs, tags=tags, version=metadata['version']))
+        if feature['properties']['klass'] == 'Section':
+            way = Way(feature,nodes_count=len(self._nodes))
+            if way.osm_id and self.exclude_osm_elements:
+                return
+            self._extract_lines(way)
+            self._nodes += way.nodes()
+            self._ways.append(way.osmium_object())
         else:
-            lonlat = feature['geometry']['coordinates']
-            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat, tags=tags, version=metadata['version']))
+            node = Node(feature)
+            if node.osm_id and self.exclude_osm_elements:
+                return
+            self._extract_lines(node)
+            self._nodes.append(node.osmium_object())
 
-    def _load_nodes(self, coordinates):
-        refs = []
-        for lonlat in coordinates:
-            id = -(len(self.nodes) + 1)
-            refs.append(id)
-            self._nodes.append(osmium.osm.mutable.Node(id=id, location=lonlat))
-        return refs
 
-    def _extract_feature_tags(self, element_type, props):
-        tags = [('citylines:id', str(props['id']))]
-        if 'osm_tags' in props:
-            original_tags = json.loads(props['osm_tags'])
-            for key in original_tags:
-                tags.append((key, str(original_tags[key])))
-
-        for line_info in props['lines']:
-            if line_info['system']:
-                tags.append(('network',line_info['system']))
-
-        if element_type == self.NODE:
-            if not 'name' in dict(tags):
-                tags.append(('name', props['name']))
-            if not 'public_transport' in dict(tags):
-                tags.append(('public_transport', 'stop_position'))
-
-        transport_mode_tags = self._transport_mode_tags(element_type, props)
-        if transport_mode_tags:
-            tags.append(transport_mode_tags)
-
-        return tags
-
-    def _extract_feature_metadata(self, props):
-        metadata = {'version': None}
-        if 'osm_metadata' in props:
-            metadata = json.loads(props['osm_metadata'])
-        return metadata
-
-    def _extract_lines(self, id, element_type, props):
-        for line_info in props['lines']:
-            name = line_info['line']
-
-            if line_info['system']:
-                name = line_info['system'] + ' ' + name
-
-            transport_mode = None # TODO
+    def _extract_lines(self, el):
+        for line in el.lines_info():
+            name = line['name']
 
             if not name in self._relations_dict:
-                self._relations_dict[name] = {'transport_mode': transport_mode, 'members': []}
+                self._relations_dict[name] = {'transport_mode': line['transport_mode'], 'members': []}
 
-            self._relations_dict[name]['members'].append(self._build_member(id, element_type))
-
-    def _build_member(self, id, element_type):
-        t = 'w' if element_type == self.WAY else 'n'
-        role = '' if element_type == self.WAY else 'stop'
-        return (t, id, role)
-
-    def _transport_mode_tags(self, element_type, props):
-        # TODO: WAY:  set for example railway=subway
-        # TODO: NODE: set for example subway=yes
-        # TODO: RELATION: set for example route=subway
-        return None
+            self._relations_dict[name]['members'].append((el.member_type(), el.id, el.member_role()))
