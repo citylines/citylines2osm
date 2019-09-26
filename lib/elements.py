@@ -110,7 +110,7 @@ class Node(Element):
 
 class Relation(object):
     def __init__(self, args):
-        self._id = args['id']
+        self.id = args['id']
         self._name = args['name']
         self._members = args['members']
         self._tags = self._build_tags()
@@ -128,4 +128,4 @@ class Relation(object):
         return None
 
     def osmium_object(self):
-        return osmium.osm.mutable.Relation(id=self._id,members=self._members,tags=self._tags)
+        return osmium.osm.mutable.Relation(id=self.id,members=self._members,tags=self._tags)
