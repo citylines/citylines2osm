@@ -28,6 +28,7 @@ For each station node, the following tags are set:
 For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
 - `type=route`
+- `public_transport:version=2`
 
 The members of the line relation are the ways and the stations' nodes. Each node has the role `stop`.
 

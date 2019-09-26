@@ -33,7 +33,7 @@ class FeaturesParser(object):
     def load_relations(self):
         for i, rel_name in enumerate(self._relations_dict):
             rel = self._relations_dict[rel_name]
-            tags = [('name',rel_name),('type','route')]
+            tags = [('name',rel_name),('type','route'),('public_transport:version','2')]
             members = []
             for m in rel:
                 members.append((m['type'], m['id'], m['role']))

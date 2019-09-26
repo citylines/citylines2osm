@@ -93,7 +93,7 @@ class TestFeaturesParser(unittest.TestCase):
         relation = parser.relations[0]
         self.assertEqual(-1, relation.id)
 
-        expected_tags = [('name', 'Metro L1'),('type', 'route')]
+        expected_tags = [('name', 'Metro L1'),('type', 'route'),('public_transport:version','2')]
         self.assertEqual(expected_tags, relation.tags)
 
         expected_members = [('w',-section_id, ''),('n', -station_id, 'stop')]
@@ -134,7 +134,7 @@ class TestFeaturesParser(unittest.TestCase):
         relation = parser.relations[0]
         self.assertEqual(-1, relation.id)
 
-        expected_tags = [('name', 'Metro L1'),('type', 'route')]
+        expected_tags = [('name', 'Metro L1'),('type', 'route'),('public_transport:version','2')]
         self.assertEqual(expected_tags, relation.tags)
 
         expected_members = [('w',section_osm_id, ''),('n', station_osm_id, 'stop')]
