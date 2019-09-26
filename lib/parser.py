@@ -3,10 +3,6 @@ import json
 from lib.elements import Node, Way, Relation
 
 class FeaturesParser(object):
-    WAY = 'way'
-    NODE = 'station'
-    RELATION = 'relation'
-
     def __init__(self, features, exclude_osm_elements=False):
         self.features = features
         self._nodes = []
