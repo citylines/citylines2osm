@@ -19,7 +19,7 @@ class TransportMode(object):
             'way': ('railway','rail'),
             'relation': ('route','train')
             },
-        # Metro/Subway
+        # Metro/Subway: default
         '4': {
             'node': ('subway','yes'),
             'way': ('railway','subway'),
@@ -68,4 +68,8 @@ class TransportMode(object):
         tags = mode[self._element_type]
         if not isinstance(tags, list):
             tags = list(tags)
+
+        # We remove Nones from list
+        tags = list(filter(None, tags))
+
         return tags
