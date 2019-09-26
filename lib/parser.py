@@ -36,7 +36,7 @@ class FeaturesParser(object):
             tags = [('name',rel_name),('type','route')]
             members = []
             for m in rel:
-                members.append((m['type'], m['id'],''))
+                members.append((m['type'], m['id'], m['role']))
             rel = osmium.osm.mutable.Relation(id=-(i+1),members=members,tags=tags)
             self._relations.append(rel)
 
@@ -99,4 +99,5 @@ class FeaturesParser(object):
             if not name in self._relations_dict:
                 self._relations_dict[name] = []
             t = 'w' if is_way else 'n'
-            self._relations_dict[name].append({'id':id, 'type':t})
+            role = '' if is_way else 'stop'
+            self._relations_dict[name].append({'id':id, 'type':t, 'role': role})

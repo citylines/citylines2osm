@@ -29,7 +29,11 @@ For each relation (line), the following tags are set:
 - `name`, which equals to System + Line name
 - `type=route`
 
-If the feature already had OSM tags, they will be kept.
+The members of the line relation are the ways and the stations' nodes. Each node has the role `stop`.
+
+Note:
+- If the feature already had OSM tags, they will be kept.
+- A `route` tag hast to be added manually in JOSM to the lines relations, because right now, the dumps are not returning the tranport mode of the line. This will be fixed soon.
 
 ## Tests
 Run:
