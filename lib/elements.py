@@ -26,17 +26,14 @@ class Element(object):
             if line_info['system']:
                 tags.append(('network',line_info['system']))
 
-        transport_mode_tags = self._transport_mode_tags()
-        if transport_mode_tags:
-            tags.append(transport_mode_tags)
+        tags += self._transport_mode_tags()
 
         return tags
 
     def _transport_mode_tags(self):
-        # TODO: WAY:  set for example railway=subway
-        # TODO: NODE: set for example subway=yes
-        # TODO: RELATION: set for example route=subway
-        return None
+        # transport_mode_id = TODO
+        # return TransportMode(transport_mode_id, __class__.__name__.lower()).tags()
+        return []
 
     def _build_metadata(self):
         metadata = {'version': None}
@@ -100,7 +97,7 @@ class Node(Element):
         lonlat = self._geometry['coordinates']
         return osmium.osm.mutable.Node(id=self.id, location=lonlat, tags=self._tags, version=self._metadata['version'])
 
-class Relation(object):
+class Relation(Element):
     def __init__(self, args):
         self.id = args['id']
         self._name = args['name']
@@ -109,15 +106,8 @@ class Relation(object):
 
     def _build_tags(self):
         tags = [('name',self._name),('type','route'),('public_transport:version','2')]
-
-        transport_mode_tags = self._transport_mode_tags()
-        if transport_mode_tags:
-            tags.append(transport_mode_tags)
-
+        tags += self._transport_mode_tags()
         return tags
-
-    def _transport_mode_tags(self):
-        return None
 
     def osmium_object(self):
         return osmium.osm.mutable.Relation(id=self.id,members=self._members,tags=self._tags)
