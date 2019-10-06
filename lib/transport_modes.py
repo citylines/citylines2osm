@@ -1,4 +1,4 @@
-class TransportMode(object):
+class TransportModes(object):
     TRANSPORT_MODES = {
         '0': None,
         # High speed train
@@ -59,15 +59,17 @@ class TransportMode(object):
             }
         }
 
-    def __init__(self, transport_mode_id, element_type):
-        self._transport_mode_id = transport_mode_id
-        self._element_type = element_type
+    def __init__(self, lines_info):
+        self._lines = {}
+        for line in lines_info:
+            self._lines[line['url_name']] = line
 
-    def tags(self):
-        mode = self.TRANSPORT_MODES[str(self._transport_mode_id)] or self.TRANSPORT_MODES['4']
-        tags = mode[self._element_type]
+    def tags(self, line_url_name, element_type):
+        transport_mode_id = self._lines[line_url_name]['transport_mode_id']
+        mode = self.TRANSPORT_MODES[str(transport_mode_id)] or self.TRANSPORT_MODES['4']
+        tags = mode[element_type]
         if not isinstance(tags, list):
-            tags = list(tags)
+            tags = [tags]
 
         # We remove Nones from list
         tags = list(filter(None, tags))

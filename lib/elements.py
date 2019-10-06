@@ -2,11 +2,12 @@ import osmium
 import json
 
 class Element(object):
-    def __init__(self, feature):
+    def __init__(self, feature, transport_modes_provider):
         self._props = feature['properties']
         self._geometry = feature['geometry']
         self.osm_id = self._props['osm_id'] if 'osm_id' in self._props else None
         self.id = self.osm_id or -self._props['id']
+        self._transport_modes_provider = transport_modes_provider
         self._tags  = self._build_tags()
         self._metadata = self._build_metadata()
 
@@ -31,9 +32,8 @@ class Element(object):
         return tags
 
     def _transport_mode_tags(self):
-        # transport_mode_id = TODO
-        # return TransportMode(transport_mode_id, __class__.__name__.lower()).tags()
-        return []
+        line_url_name = self.lines_info()[0]['url_name']
+        return self._transport_modes_provider.tags(line_url_name, self.__class__.__name__.lower())
 
     def _build_metadata(self):
         metadata = {'version': None}
@@ -43,20 +43,19 @@ class Element(object):
 
     def lines_info(self):
         lines = []
-        for line_info in self._props['lines']:
-            name = line_info['line']
-            if line_info['system']:
-                name = line_info['system'] + ' ' + name
-            transport_mode = None # TODO
-            lines.append({'name': name, 'transport_mode': transport_mode})
+        for line in self._props['lines']:
+            name = line['line']
+            if line['system']:
+                name = line['system'] + ' ' + name
+            lines.append({'name': name, 'url_name': line['line_url_name']})
         return lines
 
     def osmium_object(self):
         raise NotImplementedError
 
 class Way(Element):
-    def __init__(self, feature, nodes_count):
-        super().__init__(feature)
+    def __init__(self, feature, transport_modes_provider, nodes_count):
+        super().__init__(feature, transport_modes_provider)
         self._nodes_count = nodes_count
         self._nodes = []
         self._refs = [] if self.osm_id else self._load_nodes()
@@ -85,7 +84,7 @@ class Node(Element):
 
     def _build_tags(self):
         tags = super()._build_tags()
-
+        print(tags)
         if not 'name' in dict(tags):
             tags.append(('name', self._props['name']))
         if not 'public_transport' in dict(tags):
@@ -98,10 +97,15 @@ class Node(Element):
         return osmium.osm.mutable.Node(id=self.id, location=lonlat, tags=self._tags, version=self._metadata['version'])
 
 class Relation(Element):
-    def __init__(self, args):
+    def __init__(self, transport_modes_provider, args):
         self.id = args['id']
         self._name = args['name']
         self._members = args['members']
+
+        # We mock the lines info so the line_url_name can be fetch through #lines_info
+        self._props = {'lines': [{'line':'', 'system':None, 'line_url_name':args['url_name']}]}
+
+        self._transport_modes_provider = transport_modes_provider
         self._tags = self._build_tags()
 
     def _build_tags(self):
