@@ -1,12 +1,12 @@
 import osmium
 from lib.parser import FeaturesParser
-from lib.transport_modes import TransportModes
+from lib.transport_modes import TransportModesProvider
 
 class CitylinesWriter(object):
     def __init__(self, sections, stations, lines, output):
         self._features = sections + stations
         self.writer = osmium.SimpleWriter(output)
-        self.transport_modes_provider = TransportModes(lines)
+        self.transport_modes_provider = TransportModesProvider(lines)
 
     def run(self):
         parser = FeaturesParser(self._features, self.transport_modes_provider, exclude_osm_elements=True)

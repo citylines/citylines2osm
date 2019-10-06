@@ -84,7 +84,7 @@ class Node(Element):
 
     def _build_tags(self):
         tags = super()._build_tags()
-        print(tags)
+
         if not 'name' in dict(tags):
             tags.append(('name', self._props['name']))
         if not 'public_transport' in dict(tags):

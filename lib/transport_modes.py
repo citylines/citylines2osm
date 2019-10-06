@@ -1,4 +1,4 @@
-class TransportModes(object):
+class TransportModesProvider(object):
     TRANSPORT_MODES = {
         '0': None,
         # High speed train
