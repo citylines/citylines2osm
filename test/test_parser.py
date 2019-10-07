@@ -34,7 +34,7 @@ class TestFeaturesParser(unittest.TestCase):
                 'klass': 'Section',
                 'lines': [{'system': 'Metro', 'line': 'L1', 'line_url_name':'l1'}],
                 'osm_id':'44441',
-                'osm_tags': '{"railway":"rail"}',
+                'osm_tags': '{"previous":"tag"}',
                 'osm_metadata': '{"version":2}'
             },
             'geometry': {
@@ -49,7 +49,7 @@ class TestFeaturesParser(unittest.TestCase):
                 'name': 'Clot',
                 'lines': [{'system': 'Metro', 'line': 'L1', 'line_url_name':'l1'}],
                 'osm_id':'33331',
-                'osm_tags': '{"railway":"subway"}',
+                'osm_tags': '{"previous":"tag"}',
                 'osm_metadata':'{"version":3}'
             },
             'geometry': {
@@ -79,7 +79,7 @@ class TestFeaturesParser(unittest.TestCase):
                 self.assertEqual(self.station['geometry']['coordinates'], node.location)
                 self.assertEqual(-station_id, node.id)
 
-                expected_tags = [('citylines:id',str(station_id)),('network', 'Metro'),('subway','yes'),('name','Clot'),('public_transport','stop_position')]
+                expected_tags = [('citylines:id',str(station_id)),('network', 'Metro'),('railway','station'),('subway','yes'),('name','Clot'),('public_transport','stop_position')]
                 self.assertEqual(expected_tags, node.tags)
 
         # Ways
@@ -87,7 +87,7 @@ class TestFeaturesParser(unittest.TestCase):
         way = parser.ways[0]
         self.assertEqual(-section_id, way.id)
 
-        expected_tags = [('citylines:id', str(section_id)), ('network', 'Metro'),('railway','subway')]
+        expected_tags = [('citylines:id', str(section_id)), ('network', 'Metro'),('railway','subway'),('tunnel','yes')]
         self.assertEqual(expected_tags, way.tags)
 
         self.assertEqual([-1, -2], way.nodes)
@@ -121,7 +121,7 @@ class TestFeaturesParser(unittest.TestCase):
         self.assertEqual(station_osm_id, node.id)
         self.assertEqual(3, node.version)
 
-        expected_tags = [('citylines:id',str(station_id)),('railway','subway'),('network', 'Metro'),('subway','yes'),('name','Clot'),('public_transport','stop_position')]
+        expected_tags = [('citylines:id',str(station_id)),('previous','tag'),('network', 'Metro'),('railway','station'),('subway','yes'),('name','Clot'),('public_transport','stop_position')]
         self.assertEqual(expected_tags, node.tags)
 
         # Ways
@@ -130,7 +130,7 @@ class TestFeaturesParser(unittest.TestCase):
         self.assertEqual(section_osm_id, way.id)
         self.assertEqual(2, way.version)
 
-        expected_tags = [('citylines:id', str(section_id)),('railway','rail'),('network', 'Metro'),('railway','subway')]
+        expected_tags = [('citylines:id', str(section_id)),('previous','tag'),('network', 'Metro'),('railway','subway'),('tunnel','yes')]
         self.assertEqual(expected_tags, way.tags)
 
         # Relations

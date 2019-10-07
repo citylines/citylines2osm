@@ -3,31 +3,31 @@ class TransportModesProvider(object):
         '0': None,
         # High speed train
         '1': {
-            'node': ('train','yes'),
+            'node': [('railway','station'),('train','yes')],
             'way': ('railway','rail'),
             'relation': ('route','train')
             },
         # Intercity train
         '2': {
-            'node': ('train','yes'),
+            'node': [('railway','station'),('train','yes')],
             'way': ('railway','rail'),
             'relation': ('route','train')
             },
         # Commuter rail
         '3': {
-            'node': ('train','yes'),
+            'node': [('railway','station'),('train','yes')],
             'way': ('railway','rail'),
             'relation': ('route','train')
             },
         # Metro/Subway: default
         '4': {
-            'node': ('subway','yes'),
-            'way': ('railway','subway'),
+            'node':[('railway','station'),('subway','yes')],
+            'way': [('railway','subway'),('tunnel','yes')],
             'relation': ('route','subway')
             },
         # Light rail
         '5': {
-            'node':('light_rail','yes'),
+            'node':[('railway','station'),('light_rail','yes')],
             'way': ('railway','light_rail'),
             'relation': ('route','light_rail')
             },
@@ -47,7 +47,7 @@ class TransportModesProvider(object):
             },
         # Tram
         '9': {
-            'node':('tram','yes'),
+            'node':[('railway','station'),('tram','yes')],
             'way': ('railway','tram'),
             'relation': ('route','tram')
             },
